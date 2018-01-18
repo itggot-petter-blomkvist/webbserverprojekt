@@ -1,0 +1,36 @@
+@startuml
+    title Pollare 
+
+    !define TABLE (T,#FFAAAA)
+    !define RELATIONSHIP (R, #AAFFAA)
+
+    class poll << TABLE >>
+    class user << TABLE >>
+    class participants << TABLE >>
+    class role << TABLE >>
+
+    poll : INTEGER id
+    poll : VARCHAR name
+    poll : VARCHAR slug
+    poll : DATETIME creation_date
+    poll : BOOL allow_anonymous
+ 
+    participants : INTEGER poll_id
+    participants : INTEGER user_id
+    participants : INTEGER role_id
+    participants : VARCHAR ip_adress
+    participants : VARCHAR local_adress
+
+    user : INTEGER id
+    user : VARCHAR name
+    user : VARCHAR email
+    user : BINARY password 
+
+    role : INTEGER id
+    role : VARCHAR name
+
+    poll "1" -- "*" participants
+    user "1" -- "*" participants 
+    role "1" -- "*" participants
+
+@enduml 
