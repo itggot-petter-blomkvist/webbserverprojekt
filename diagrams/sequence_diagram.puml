@@ -2,15 +2,39 @@
 title Pollare
 skinparam shadowing false
 
-actor User
+actor Person
 participant Browser
 participant Application
 participant Poll
+participant User
 database Database
 
-== Viewing poll /abc123 ==
+== Login to ABC123 with password DEF456==
+activate Person
+Person -> Browser: HTTP post /login
+activate Browser
+Browser -> Application: post('/login')
+activate Application
+Application -> Application: match route post('/login')
+Application -> Application: encrypt password
+Application -> User: login("ABC123", "5c140ae1c1fa035f66650e2737ec0331")
 activate User
-User -> Browser: HTTP get /polls/abc123
+User -> Database: SELECT * users WHERE name IS UPPER("ABC123") AND password IS "5c140ae1c1fa035f66650e2737ec0331" 
+activate Database
+Database -> User: ~[[1, "ABC123", "coolguy@happy.cool", "5c140ae1c1fa035f66650e2737ec0331"]]
+deactivate Database
+User -> User: new(db_result[0])
+User -> Application: User
+deactivate User
+Application -> Application: session[:name] = "ABC123"
+Application -> Application: slim(:home)
+Application -> Browser: HTML
+deactivate Application
+Browser -> Person: HTTP response
+deactivate Browser
+
+== Viewing poll /abc123 ==
+Person -> Browser: HTTP get /polls/abc123
 activate Browser
 Browser -> Application: get('/polls/abc123')
 activate Application
@@ -27,7 +51,7 @@ deactivate Poll
 Application -> Application: slim(:polls/poll)
 Application -> Browser: HTML
 deactivate Application
-Browser -> User: HTTP response
+Browser -> Person: HTTP response
 deactivate Browser
-deactivate User
+deactivate Person
 @enduml
