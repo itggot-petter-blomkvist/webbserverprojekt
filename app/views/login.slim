@@ -1,0 +1,13 @@
+doctype html
+html
+  head
+    title Login
+    link href="/css/default.css" rel="stylesheet" type="text/css"
+  body
+    .centeredForm
+      form method="post" action="/login" class="centeredForm"
+        h1 ==@title
+        input type="text" placeholder="Username" required="required"
+        input type="password" placeholder="Password" required="required"
+        input type="submit" value="Login"
+        p.register Don't have an account yet?
