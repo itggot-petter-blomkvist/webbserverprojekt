@@ -1,0 +1,33 @@
+@startuml
+title Pollare
+skinparam shadowing false
+
+actor User
+participant Browser
+participant Application
+participant Poll
+database Database
+
+== Viewing poll /abc123 ==
+activate User
+User -> Browser: HTTP get /polls/abc123
+activate Browser
+Browser -> Application: get('/polls/abc123')
+activate Application
+Application -> Application: match route get('/polls/:id')
+Application -> Poll: get('abc123')
+activate Poll
+Poll -> Database: SELECT * FROM polls WHERE slug IS 'abc123'
+activate Database
+Database -> Poll: ~[[1, "Am i stoopod?", "abc123", "1999-03-21 23:54", 3]]
+deactivate Database
+Poll -> Poll: new(db_result[0])
+Poll -> Application: Poll
+deactivate Poll
+Application -> Application: slim(:polls/poll)
+Application -> Browser: HTML
+deactivate Application
+Browser -> User: HTTP response
+deactivate Browser
+deactivate User
+@enduml

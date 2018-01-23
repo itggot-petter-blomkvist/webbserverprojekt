@@ -1,0 +1,47 @@
+@startuml
+    skinparam shadowing false
+    
+    title Pollare 
+    !define table(name) class name << (T,#FFAAAA) >>
+
+    table(polls)
+    table(users)
+    table(participants)
+    table(roles)
+
+    polls : INTEGER id
+    polls : TEXT name
+    polls : TEXT slug
+    polls : TEXT creation_date
+    polls : INTEGER security_level
+    note bottom of polls 
+        <b>security_level</b> controls 
+        which votes will be pass.
+        --
+        0: Pass any vote.
+        1: Pass any vote <b>from</b> 
+            <b>a unique local ip address.</b>
+        2: Pass any vote from 
+            a unique <b>public ip address.</b>
+        3: Pass any vote from
+            a unique <b>account.</b>
+    end note
+
+    participants : INTEGER poll_id
+    participants : INTEGER user_id
+    participants : INTEGER role_id
+    participants : TEXT local_ip_address
+    participants : TEXT public_ip_address
+
+    users : INTEGER id
+    users : TEXT name
+    users : TEXT email
+    users : BINARY password 
+
+    roles : INTEGER id
+    roles : TEXT name
+
+    polls "1" -- "*" participants
+    users "1" -- "*" participants 
+    roles "1" -- "*" participants
+@enduml 
