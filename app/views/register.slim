@@ -4,8 +4,12 @@ html
     title Login
     link href="/css/default.css" rel="stylesheet" type="text/css"
   body
-    form method="post" action="/login"
-      input type="text" pattern="[a-zA-Z0-9_-]{6,16}" placeholder="username"
-      input type="email" placeholder="e-mail"
-      input type="password" placeholder="password"
-      input type="password" placeholder="repeat password"
+    .centeredForm
+      form method="post" action="/login" class="centeredForm"
+        h1 Who are you?
+        input type="text" placeholder="Username" required="required" pattern="[a-zA-Z0-9-_]{5,16}"
+        input type="email" placeholder="Email" required="required"
+        input type="password" placeholder="Password" required="required"
+        input type="password" placeholder="Repeat Password" required="required" class="repeatPassword"
+        input type="submit" value="Register"
+        a.information href="/login" Already have an account? Login here

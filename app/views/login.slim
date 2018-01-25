@@ -7,7 +7,9 @@ html
     .centeredForm
       form method="post" action="/login" class="centeredForm"
         h1 ==@title
+        p Pollare is the number #1 polling solution!
+        a.information href="/" Find out more
         input type="text" placeholder="Username" required="required"
         input type="password" placeholder="Password" required="required"
         input type="submit" value="Login"
-        p.register Don't have an account yet?
+        a.information href="/register" Don't have an account yet? Register here
