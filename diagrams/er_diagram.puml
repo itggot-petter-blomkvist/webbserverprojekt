@@ -6,8 +6,9 @@
 
     table(polls)
     table(users)
-    table(participants)
+    table(votes)
     table(roles)
+    table(options)
 
     polls : INTEGER id
     polls : TEXT name
@@ -27,11 +28,11 @@
             a unique <b>account.</b>
     end note
 
-    participants : INTEGER poll_id
-    participants : INTEGER user_id
-    participants : INTEGER role_id
-    participants : TEXT local_ip_address
-    participants : TEXT public_ip_address
+    votes : INTEGER poll_id
+    votes : INTEGER user_id
+    votes : INTEGER role_id
+    votes : TEXT local_ip_address
+    votes : TEXT public_ip_address
 
     users : INTEGER id
     users : TEXT name
@@ -41,7 +42,14 @@
     roles : INTEGER id
     roles : TEXT name
 
-    polls "1" -- "*" participants
-    users "1" -- "*" participants 
-    roles "1" -- "*" participants
+    options : INTEGER id
+    options : INTEGER poll_id
+    options : TEXT description
+
+    options "1" -- "*" polls
+
+    polls "1" -- "*" votes
+    users "1" -- "*" votes 
+    roles "1" -- "*" votes
+    options "1" -- "*" votes
 @enduml 
