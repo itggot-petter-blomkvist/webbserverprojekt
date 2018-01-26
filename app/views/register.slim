@@ -5,7 +5,7 @@ html
     link href="/css/default.css" rel="stylesheet" type="text/css"
   body
     .centeredForm
-      form method="post" action="/register" class=(@error ? 'centeredForm error' : 'centeredForm')
+      form method="post" action="/register" class=(@result ? 'centeredForm error' : 'centeredForm')
         h1 Who are you?
         input type="text" placeholder="Username" required="required" name="username"
         - if @username_error
