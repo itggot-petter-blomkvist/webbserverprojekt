@@ -5,11 +5,15 @@ html
     link href="/css/default.css" rel="stylesheet" type="text/css"
   body
     .centeredForm
-      form method="post" action="/login" class="centeredForm"
+      form method="post" action="/login" class=(@result ? 'centeredForm error' : 'centeredForm')
         h1 ==@title
         p Pollare is the number #1 polling solution!
         a.information href="/" Find out more
-        input type="text" placeholder="Username" required="required" name="username"
+        input type="text" placeholder="Username or Email" required="required" name="email_or_password"
+        - if @username_error
+          p.information.error = @username_error
         input type="password" placeholder="Password" required="required" name="password"
+        - if @password_error
+          p.information.error = @password_error
         input type="submit" value="Login"
         a.information href="/register" Don't have an account yet? Register here
