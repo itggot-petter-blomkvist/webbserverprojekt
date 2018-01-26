@@ -64,7 +64,11 @@ form.centeredForm
     margin: auto;
 
     animation: centeredFormIntro 0.5s;
+}
 
+form.centeredForm.error
+{
+    animation: centeredFormError 0.1s 5 alternate linear !important;
 }
 
 form.centeredForm > h1
@@ -92,12 +96,17 @@ form.centeredForm > input
 
     animation: centeredFormInputIntro 0.5s;
 }
+form.centeredForm.error > input
+{
+    animation: none;
+}
 
-form.centeredForm > a.information
+form.centeredForm > .information
 {
     animation: centeredFormInformationIntro 1s;
     text-align: right;
     margin: 0px 0px 0px 5px;
+    padding: 0;
     font-size: 11px;
     color: white;
     opacity: 0.5;
@@ -105,6 +114,19 @@ form.centeredForm > a.information
     transition: opacity 0.1s;
     outline: 0;
 }
+form.centeredForm.error > .information
+{
+    animation: none;
+}
+
+
+form.centeredForm > .information.error
+{
+    color: rgb(255, 50, 50);
+    opacity: 0.8;
+    margin: 0;
+}
+
 form.centeredForm > .repeatPassword
 {
     animation: none;
@@ -132,4 +154,9 @@ form.centeredForm > input:invalid + .repeatPassword
     0% {margin-right: 20px; opacity: 0;}
     50% {margin-right: 20px; opacity: 0;}
     100% {margin-right: 0px; opacity: 0.5;}
+}
+@keyframes centeredFormError
+{
+    from {padding-left: 10px; padding-right: 0px;}
+    to {padding-left: 0px; padding-right: 10px;}
 }
