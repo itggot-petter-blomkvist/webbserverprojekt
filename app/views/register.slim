@@ -5,11 +5,18 @@ html
     link href="/css/default.css" rel="stylesheet" type="text/css"
   body
     .centeredForm
-      form method="post" action="/login" class="centeredForm"
+      form method="post" action="/register" class=(@error ? 'centeredForm error' : 'centeredForm')
         h1 Who are you?
-        input type="text" placeholder="Username" required="required" pattern="[a-zA-Z0-9-_]{5,16}"
-        input type="email" placeholder="Email" required="required"
-        input type="password" placeholder="Password" required="required"
-        input type="password" placeholder="Repeat Password" required="required" class="repeatPassword"
+        input type="text" placeholder="Username" required="required" name="username"
+        - if @username_error
+          p.information.error = @username_error
+        input type="text" placeholder="Email" required="required" name="email"
+        - if @email_error
+          p.information.error = @email_error
+        input type="password" placeholder="Password" required="required" name="password"
+        input type="password" placeholder="Repeat Password" required="required" class="repeatPassword" name="password_conf"
+        
+        - if @password_error
+          p.information.error = @password_error
         input type="submit" value="Register"
         a.information href="/login" Already have an account? Login here
