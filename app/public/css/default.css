@@ -1,162 +1,79 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-
 body
 {
-    background-color: lightseagreen;
     margin: 0;
-    font-family: 'Roboto', sans-serif;
+    background-color: whitesmoke;
+    background: url(/img/noise.png);
+    font-family: 'Roboto';
 }
 
-input
-{
-    font-family: 'Roboto', sans-serif;
-    border: solid 1px rgba(255,255,255,0.2);
-    border-radius: 2px;
-    background-color: rgba(255,255,255,0.4);
-    padding: 8px;
-    font-size: 16px;
-    text-align: center;
-    opacity: 0.5;
-
-    color: white;
-
-    transition: background-color 0.1s;
-}
-input:invalid, input[type='submit']
-{
-    box-shadow: none;
-}
-input:not([type='submit']):valid, input:focus, input[type='submit']:hover
-{
-    opacity: 1;
-    background-color: white;
-    color: black;
-}
-input::placeholder
-{
-    color: white;
-    opacity: 1;
-    transition: color 0.1s;
-}
-input:focus::placeholder
-{
-    color: rgba(0,0,0,0.8);
-    opacity: 1;
-}
-input[type='submit']
-{
-    opacity: 1;
-    cursor: pointer;
-}
-
-/* Centered Form, used in Login and Register (Covers the entire window)*/
-
-form.centeredForm
-{
-    display: flex;
-    justify-content: center;
-    flex-direction: column;
-
-    height: 100vh;
-    overflow:hidden;
-    width: 100%;
-    max-width: 300px;
-    margin: auto;
-
-    animation: centeredFormIntro 0.5s;
-}
-
-form.centeredForm.error
-{
-    animation: centeredFormError 0.1s 5 alternate linear !important;
-}
-
-form.centeredForm > h1
-{
-    font-weight: normal;
-    color: white;
-    text-align: center;
-    margin: 0;
-}
-
-form.centeredForm > p
-{
-    margin: 0;
-    color: white;
-    text-align: center;
-}
-
-form.centeredForm > input
+img#logo
 {
     display: block;
-    margin: 5px 0 5px 0;
-
-    width: 100%;
-    box-sizing: border-box;
-
-    animation: centeredFormInputIntro 0.5s;
-}
-form.centeredForm.error > input
-{
-    animation: none;
+    height: 128px;
+    margin: auto;
+    padding: 50px 0px 50px 0px;
 }
 
-form.centeredForm > .information
+a#tip
 {
-    animation: centeredFormInformationIntro 1s;
+    font-size: 0.8em;
+    margin-top: 2px;
     text-align: right;
-    margin: 0px 0px 0px 5px;
-    padding: 0;
-    font-size: 11px;
-    color: white;
     opacity: 0.5;
-    margin-bottom: 10px;
+    color: black;
     transition: opacity 0.1s;
     outline: 0;
 }
-form.centeredForm.error > .information
+a#tip:hover
 {
-    animation: none;
+    opacity: 1;
 }
 
-
-form.centeredForm > .information.error
+form#login
 {
-    color: rgb(255, 50, 50);
-    opacity: 0.8;
-    margin: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    max-width: 300px;
+    margin: auto;
+    padding: 0px 10px 10px 10px;
+}
+form#login > input, button
+{
+    text-align: center;
+    background-color: white;
+    box-shadow: rgba(0,0,0,0.05) 0px 0px 5px;
+    border: none;
+    padding: 10px;
+    border: solid 1px rgba(0,0,0,0.15);
+    transition: background-color, border 0.1s;
+    font-family: 'Roboto';
+    font-size: 1.1em;
+}
+form#login > input
+{
+    margin-top: 10px;
+}
+form#login > input[type="submit"]
+{
+    cursor: pointer;
+}
+form#login > input[type="submit"]:hover, form#login > input:focus
+{
+    background-color: rgb(230, 230, 230);
+    border: solid 1px rgba(0,0,0,0.2);
 }
 
-form.centeredForm > .repeatPassword
+.cookie_agreement
 {
-    animation: none;
-    transition: all 0.1s;
-}
-form.centeredForm > input:invalid + .repeatPassword
-{
-    opacity: 0;
-    margin-top: -42.5px;
-    pointer-events: none;
-}
-
-@keyframes centeredFormInputIntro
-{
-    0% {margin-top: 100px;}
-    100% {margin: 5px 0 5px 0;}
-}
-@keyframes centeredFormIntro
-{
-    0% {opacity: 0;}
-    100% {opacity: 1;}
-}
-@keyframes centeredFormInformationIntro
-{
-    0% {margin-right: 20px; opacity: 0;}
-    50% {margin-right: 20px; opacity: 0;}
-    100% {margin-right: 0px; opacity: 0.5;}
-}
-@keyframes centeredFormError
-{
-    from {padding-left: 10px; padding-right: 0px;}
-    to {padding-left: 0px; padding-right: 10px;}
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    height: 40px;
+    box-shadow: rgba(0,0,0,0.05) 0px 0px 5px;
+    border-top: solid 1px rgba(0,0,0,0.15);
 }

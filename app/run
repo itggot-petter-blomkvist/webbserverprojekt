@@ -1,1 +1,2 @@
+#!/bin/bash
 bundle exec rerun --force-polling --ignore "*.{js,css,html,slim}" "rackup --host 0.0.0.0"
