@@ -1,0 +1,41 @@
+@startuml
+    title Pollare
+    !define table(name) class name << (T,#FFAAAA) >>
+
+    table(polls)
+    table(votes)
+    table(users)
+    table(options)
+    table(follows)
+
+    options : KEY id
+    options : INTEGER poll_id
+
+
+    users : KEY id
+    users : TEXT name
+    users : TEXT email
+    users : TEXT password
+    users : TEXT registration_date
+
+    polls : KEY id
+    polls : INTEGER owner_id
+    polls : INTEGER security_level
+
+    votes : KEY id
+    votes : INTEGER poll_id
+    votes : INTEGER user_id
+    votes : INTEGER option_id
+    votes : TEXT date
+
+    follows : INTEGER poll_id
+    follows : INTEGER user_id
+
+    votes::poll_id -- polls::id
+    users::id -- polls::owner_id
+    votes::user_id - users::id
+    options::poll_id -- polls::id
+    votes::option_id -- options::id
+    follows::poll_id - polls::id
+    users::id - follows::user_id
+@enduml

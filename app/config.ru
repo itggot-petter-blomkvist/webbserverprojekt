@@ -8,6 +8,7 @@ end
 
 DataMapper.database = "./databases/database.sqlite"
 
+enable :sessions
 #Run application
 require_relative 'app.rb'
 run App

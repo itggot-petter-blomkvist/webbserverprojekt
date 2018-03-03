@@ -1,8 +1,19 @@
 img id="logo" src="/img/logo.png"
-form id="login" method="post" action="/login"
+form id="login" method="post" action="/register"
+    - case @username_error
+        - when :exists
+            p.error Username is already in use
     input name="username"   placeholder="Username"          type="text"
+    - case @email_error
+        - when :exists
+            p.error Email is already in use
     input name="email"      placeholder="Email"             type="email"
+    - case @password_error
+        - when :match
+            p.error Passwords do not match
+        - when :length
+            p.error Password needs to be between 6 and 32 letters long
     input name="password1"  placeholder="Password"          type="password"
     input name="password2"  placeholder="Repeat Password"   type="password"
     input value="Register"     type="submit"
-    a href="/login" id="tip" Already registered?
+    a.tip href="/login" Already registered?

@@ -141,16 +141,24 @@ class DataMapper
     #
     # Examples
     #   User.has_look_alike( :name => 'Kizaru', :email => 'impossible.email' )
-    #   # => true
+    #   # => [:name]
     #
-    # Returns true if the database object has any object containing any of the passed values
+    # Returns the properties that already exist, nil if none of them exists.
     def self.has_look_alike( where )
-        where.keys.each do |k|
-            if has( k => where[k] )
-                return true
+        look_alikes = get( where ) {{ :where_method => :or }}
+        look_alike_properties = nil
+        look_alikes.each do |e|
+            @properties.each do |p|
+                v = e.method_missing(p)
+                if v == where[p]
+                    look_alike_properties ||= []
+                    if !look_alike_properties.include? p
+                        look_alike_properties.push(p)
+                    end
+                end
             end
         end
-        false
+        look_alike_properties
     end
     # Public: Get all the objects in the table
     #
@@ -195,7 +203,17 @@ class DataMapper
             end
         end
         from_statement = "FROM #{@table_name_attr}"
-        where_statement = tests.length > 0 ? where_statement = "WHERE #{@table_name_attr}.#{tests.join(" AND #{@table_name_attr}.")}" : ""
+        where_statement = ""
+        where_method = :and
+        if options.has_key? :where_method
+            where_method = options[:where_method]
+        end
+        case where_method
+        when :or
+            where_statement = tests.length > 0 ? where_statement = "WHERE #{@table_name_attr}.#{tests.join(" OR #{@table_name_attr}.")}" : ""
+        when :and
+            where_statement = tests.length > 0 ? where_statement = "WHERE #{@table_name_attr}.#{tests.join(" AND #{@table_name_attr}.")}" : ""
+        end
         select_statement = "SELECT *"
         join_statement = ""
         if options.has_key? :preload
@@ -213,7 +231,6 @@ class DataMapper
                 end
             end
         end
-        puts "#{select_statement} #{from_statement} #{join_statement} #{where_statement}"
         data = database.execute( "#{select_statement} #{from_statement} #{join_statement} #{where_statement}",  test_values)
         count_request
         if options.has_key? :preload

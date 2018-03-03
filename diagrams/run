@@ -1,0 +1,2 @@
+#!/bin/bash
+rerun ruby generate_database.rb --pattern **/*.{puml}

@@ -14,7 +14,12 @@ img#logo
     padding: 50px 0px 50px 0px;
 }
 
-a#tip
+p.error
+{
+    margin: 0;
+    color: indianred;
+}
+a.tip
 {
     font-size: 0.8em;
     margin-top: 2px;
@@ -24,7 +29,7 @@ a#tip
     transition: opacity 0.1s;
     outline: 0;
 }
-a#tip:hover
+a.tip:hover
 {
     opacity: 1;
 }
@@ -52,7 +57,7 @@ form#login > input, button
 }
 form#login > input
 {
-    margin-top: 10px;
+    margin-bottom: 10px;
 }
 form#login > input[type="submit"]
 {
