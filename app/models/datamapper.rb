@@ -125,12 +125,25 @@ class DataMapper
     #
     # Returns the number columns in use by this database object
     def self.column_amount
-        #The one is the primary key.
         return 1 + @properties.length
     end
+    # Public: Ask database object if it contains any object with ALL of the passed values
+    #
+    # Examples
+    #   User.has( :name => 'Luffy', :email => 'luff@gmail.com' )
+    #   # => true
+    #
+    # Returns true if the database object has any object containing all of the passed values
     def self.has( where )
         get(where).length > 0
     end
+    # Public: Ask the database object if it contain any objects containing ANY of the passed values
+    #
+    # Examples
+    #   User.has_look_alike( :name => 'Kizaru', :email => 'impossible.email' )
+    #   # => true
+    #
+    # Returns true if the database object has any object containing any of the passed values
     def self.has_look_alike( where )
         where.keys.each do |k|
             if has( k => where[k] )
@@ -139,63 +152,65 @@ class DataMapper
         end
         false
     end
+    # Public: Get all the objects in the table
+    #
+    # Examples
+    #   User.all
+    #   # => [User, User, User, User, User]
+    #
+    # Returns all the objects in the table
     def self.all()
         self.get( nil )
     end
-    def self.get( where )
-        options = nil
-        if block_given?
-            options = yield
-        else
-            options = Hash.new
-        end
+    # 
+    #
+    #
+    #
+    def self.get( where, &block )
+        options = block_given? ? block.call : Hash.new
 
         if where.is_a? Integer
-            return self.get( @primary_key_attr => where ).first
+            return self.get( @primary_key_attr => where, &block ).first
         end
 
         tests = []
         test_values = []
-        if where
-            where.keys.each do |k|
-                p where[k].class
-                p where[k]
-                if where[k].is_a? Hash #Many to many
-                    relation_table = where[k].keys[0]
-                    value = where[k].values[0]
-                    tests.push("#{k} IN ( SELECT #{relation_table[1]} FROM #{relation_table[0]} WHERE #{relation_table[2]} IS ?)")
-                    p where[k]
-                    test_values.push(where[k].values[0])
-                else
-                    tests.push("#{k} IS ?")
-                    test_values.push(where[k])
-                end
+        where = where ? where : {}
+        where.keys.each do |k|
+            if where[k].is_a? Hash
+                relation_table = where[k].keys[0]
+                tests.push("#{k} IN ( SELECT #{relation_table[1]} FROM #{relation_table[0]} WHERE #{relation_table[2]} IS ?)")
+                test_values.push(where[k].values[0])
+            else
+                tests.push("#{k} IS ?")
+                test_values.push(where[k])
             end
         end
-        select_statement = "SELECT *"
         from_statement = "FROM #{@table_name_attr}"
+        where_statement = tests.length > 0 ? where_statement = "WHERE #{@table_name_attr}.#{tests.join(" AND #{@table_name_attr}.")}" : ""
+        select_statement = "SELECT *"
         join_statement = ""
-        where_statement = ""
-        if where
-            where_statement = "WHERE #{@table_name_attr}.#{tests.join(" AND #{@table_name_attr}.")}"
-        end
-
         if options.has_key? :preload
             select_statement = "SELECT #{@table_name_attr}.* "
             options[:preload].each do |a|
                 a_table_name = eval(@associations[a][0].to_s).table_name_attr
-
                 select_statement += ", #{a_table_name}.*"
-                join_statement += " LEFT JOIN #{a_table_name} ON #{@table_name_attr}.#{@associations[a][1]} = #{a_table_name}.#{@associations[a][2]}"
+                join_statement += " LEFT JOIN #{a_table_name} ON #{@table_name_attr}.#{@associations[a][1]} ="
+                if (hash = @associations[a][2]).is_a? Hash
+                    property = hash.values[0]
+                    array = hash.keys[0]
+                    join_statement += "( SELECT #{array[1]} FROM #{array[0]} WHERE #{array[2]} IS #{a_table_name}.#{property} )"
+                else
+                    join_statement += " #{a_table_name}.#{@associations[a][2]}"
+                end
             end
         end
-        p "#{select_statement} #{from_statement} #{join_statement} #{where_statement}"
+        puts "#{select_statement} #{from_statement} #{join_statement} #{where_statement}"
         data = database.execute( "#{select_statement} #{from_statement} #{join_statement} #{where_statement}",  test_values)
         count_request
-        if options.has_key? :preload # This is only going to be one object... Thank god. For now.
+        if options.has_key? :preload
             object_preloads = Hash.new 
             objects = []
-
             data.each do |row|
                 obj_id = row[0]
                 if !object_preloads.has_key? obj_id
@@ -219,9 +234,6 @@ class DataMapper
             data.map { |d| new(d) }
         end
     end
-
-
-
     def self.create( *cols )
         encrypted = []
         @properties.each_with_index do |p, i|
@@ -265,7 +277,6 @@ class DataMapper
     class << self
         attr_reader :properties, :primary_key_attr, :table_name_attr, :associations, :encrypted_properties
     end
-
     def initialize( cols, preloads = Hash.new )
         @data = Hash.new
         @data[self.class.primary_key_attr] = cols [0]
