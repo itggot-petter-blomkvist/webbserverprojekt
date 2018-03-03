@@ -159,13 +159,21 @@ class DataMapper
     #   # => [User, User, User, User, User]
     #
     # Returns all the objects in the table
-    def self.all()
-        self.get( nil )
+    def self.all(&block)
+        self.get( nil, &block )
     end
-    # 
+    # Public: Get all the objects in the table with the specified values
     #
+    # where - A hash containing all the required values OR an integer representing a primary key OR nil for all
+    # block - An optional block containing options for the get
     #
+    # Examples
+    #   u = User.get( :name => "Gecko", :email => "gee@gmail.com" ) {{ preload: [:posts] }}
+    #   p = u.posts
+    #   DataMapper.requests_done
+    #   # => 1
     #
+    # Returns all objects that match the criteria
     def self.get( where, &block )
         options = block_given? ? block.call : Hash.new
 
@@ -234,6 +242,15 @@ class DataMapper
             data.map { |d| new(d) }
         end
     end
+    # Public: Create a new object and insert it into a row
+    #
+    # cols - The values of all the columns
+    #
+    # Examples
+    #   User.create("Robin", "rawr@gmail.com", "pa$$word")
+    #   # => User
+    #
+    # Returns the added object
     def self.create( *cols )
         encrypted = []
         @properties.each_with_index do |p, i|
@@ -248,6 +265,15 @@ class DataMapper
         count_request
         new(database.execute( "SELECT * FROM #{@table_name_attr} WHERE #{@primary_key_attr} IS last_insert_rowid()" ).first)
     end
+    # Public: Update a specific row with modifications
+    #
+    # modifications - The columns to change and the values to change to
+    # where - A hash identifying which rows to change
+    #
+    # Examples
+    #   User.modify( {:name => 'Fatty'}, {:name => 'Catty'} )
+    #   # => Changes all users named Catty to Fatty
+    #
     def self.modify( modifications, where )
         update_statement = "UPDATE #{@table_name_attr}"
         set_statement = "SET "
@@ -277,6 +303,17 @@ class DataMapper
     class << self
         attr_reader :properties, :primary_key_attr, :table_name_attr, :associations, :encrypted_properties
     end
+
+    # Public: Initialize a new object from column values and preloaded properties
+    #
+    # cols - The column values
+    # preloads - Optional preloaded properties
+    #
+    # Examples
+    #   User.new(1, "Buggy", "fun@gmail.com", "8f036369a5cd26454949e594fb9e0a2d")
+    #   # => User
+    #
+    # Returns the initialized user
     def initialize( cols, preloads = Hash.new )
         @data = Hash.new
         @data[self.class.primary_key_attr] = cols [0]
@@ -291,9 +328,26 @@ class DataMapper
             end
         end
     end
+    # Public: Modify values in the user
+    #
+    # modifications - A hash containing the modifications
+    #
+    # Examples
+    #   user_instance.modify( name: "NewName", email: "Ne@we.mail")
+    #   # => Modifies the specified values
+    #
     def modify(modifications)
         self.class.modify(modifications, {self.class.primary_key_attr => @data[self.class.primary_key_attr]})
     end
+    # Public: The method handling all of the property access
+    #
+    # method - The missing method (usually a property or association)
+    # args - The method arguments (used when modifying properties)
+    #
+    # Examples
+    #   user_instance.name = "NewName"
+    #   posts = user_instance.posts
+    #
     def method_missing(method, *args)
         encrypted = self.class.encrypted_properties ? self.class.encrypted_properties : []
         associations = self.class.associations ? self.class.associations : Hash.new
