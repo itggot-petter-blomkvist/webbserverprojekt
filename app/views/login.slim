@@ -1,6 +1,14 @@
 img id="logo" src="/img/logo.png"
 form id="login" method="post" action="/login"
+    - if @username_error == :wrong || @password_error == :wrong
+        p.error Wrong username or password
+    - case @username_error
+        - when :none
+            p.error Please enter a username
     input name="username"   placeholder="Username"  type="text"
+    - case @password_error
+        - when :none
+            p.error Please enter a password
     input name="password"   placeholder="Password"  type="password"
     input value="Login"     type="submit"
     a.tip href="/register" Don't have an account yet?

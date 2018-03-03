@@ -231,6 +231,8 @@ class DataMapper
                 end
             end
         end
+        puts "Getting: #{select_statement} #{from_statement} #{join_statement} #{where_statement}"
+        puts test_values
         data = database.execute( "#{select_statement} #{from_statement} #{join_statement} #{where_statement}",  test_values)
         count_request
         if options.has_key? :preload
