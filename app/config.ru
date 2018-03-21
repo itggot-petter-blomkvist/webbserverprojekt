@@ -7,6 +7,7 @@ Dir["./models/**/*.rb"].each do |f|
 end
 
 DataMapper.database = "./databases/database.sqlite"
+Poll.set_allow_anonymous(false)
 #Run application
 require_relative 'app.rb'
 run App
