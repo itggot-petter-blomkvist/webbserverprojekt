@@ -10,7 +10,7 @@
 
     options : KEY id
     options : INTEGER poll_id
-
+    options : TEXT name
 
     users : KEY id
     users : TEXT name
@@ -20,14 +20,17 @@
 
     polls : KEY id
     polls : INTEGER owner_id
+    polls : TEXT name
     polls : INTEGER security_level
+    polls : TEXT slug
 
     votes : KEY id
     votes : INTEGER poll_id
     votes : INTEGER user_id
     votes : INTEGER option_id
     votes : TEXT date
-
+    votes : TEXT ip
+    
     follows : INTEGER poll_id
     follows : INTEGER user_id
 
