@@ -1,149 +1,74 @@
 class DataMapper
-    # Public: Get the amount of sql-requests executed by the datamapper
-    #
-    # Examples
-    #   
-    #   DataMapper.requests_done
-    #   # => 5
-    #
-    # Returns the sql-requests done
+    # Get the amount of sql-requests executed by the datamapper
+    # @return [Integer] the number of sql-requests done
     def self.requests_done
         @@requests_done ||= 0
     end
-    # Public: Add 1 requests to the amount of sql-requests done by the datamapper
-    #
-    # Examples
-    #
-    #   DataMapper.count_request
-    #   # => 6
-    #
-    # Returns the sql-requests done
+    # Add 1 requests to the amount of sql-requests done by the datamapper
+    # @return [Integer] the number of sql-requests done
     def self.count_request
         @@requests_done ||= 0
         @@requests_done += 1
     end
-    # Public: Set the database in use by the datamapper
-    #
-    # database - A path to the database
-    #
-    # Examples
-    #
-    #   DataMapper.database = "./databases/database.sqlite"
-    #   # => SQLite3::Database
-    #
-    # Returns an instance of the database
+    # Set the database in use by the datamapper
+    # @return [SQLite3::Database] an instance of the database
     def self.database=( database )
         @@database = SQLite3::Database.open database
     end
-    # Public: Get the database instance in use by this datamapper
-    #
-    # Examples
-    #
-    #   DataMapper.database
-    #   # => SQLite3::Database
-    #
-    # Returns an instance of the database in use
+    # Get the database instance in use by this datamapper
+    # @return [SQLite3::Database] an instance of the database in use
     def self.database()
         @@database
     end
-    # Public: Set the table of a derived database object
-    #
-    # n - A symbol representation of the name to use
-    #
-    # Examples
-    #
-    #   table_name :users
-    #   # => :users
-    #
-    # Returns the table name
+    # Set the table of the database object
+    # @return [Symbol] The table name
     def self.table_name( n )
         @table_name_attr = n
     end
-    # Public: Set the primary key of a derived database object
-    #
-    # key - The primary key column as a symbol
-    #
-    # Examples
-    #
-    #   primary_key :id
-    #   # => :id
-    #
-    # Returns the primary key column
+    # Set the primary key of the database object
+    # @param key [Symbol] The primary key column as a symbol
+    # @return [Symbol] The primary key column
     def self.primary_key( key )
         @primary_key_attr = key
     end
-    # Public: Add a property to a derived database object
-    #
-    # p - The property column to add as a symbol
-    #
-    # Examples
-    #
-    #   property :name
-    #   # => [:name, :email]
-    #
-    # Returns all the properties
+    # Add a property to a derived database object
+    # @param p [Symbol] The property column to add
+    # @return [Array] all the properties
     def self.property( p )
         @properties ||= []
         @properties.push( p )
     end
-    # Public: Add an encrypted property to a derived database object
-    #
-    # p - The encrypted property to add (as a symbol)
-    #
-    # Examples
-    #
-    #   encrypted :password
-    #   # => [:password]
-    #
-    # Returns all the encrypted properties
+    # Add an encrypted property to a derived database object
+    # @param p [Symbol] The encrypted property to add (as a symbol)
+    # @return [Array] all the encrypted properties
     def self.encrypted( p )
         self.property(p)
         @encrypted_properties ||= []
         @encrypted_properties.push( p )
     end
-    # Public: Set up an association to another database object
-    #
-    # p - A member name to use for the association
-    # clazz - The class of the associated database object !Represented as a symbol!
-    # relation - The relation to use for fetching the associated object
-    #
-    # Examples
-    #
-    #   associated :posts, :post, :id => :user_id
-    #   # => {:posts => [:post, :id, :user_id]}
-    #
-    # Returns a hash with all associations
+    # Set up an association to another database object
+    # @param p [Symbol] The name of the association
+    # @param clazz [Symbol] The class of the associated database object
+    # @param relation [Hash] The relation to use for fetching the associated object
+    # @return [Hash] A hash with all associations
     def self.association( p, clazz, relation )
         @associations ||= Hash.new
         @associations[p] = [clazz, relation.keys[0], relation[relation.keys[0]]]
     end
-    # Public: Get the amount of columns in use by this database object
-    #
-    # Examples
-    #   User.column_amount
-    #   # => 5
-    #
-    # Returns the number columns in use by this database object
+    # Get the amount of columns in use by this database object
+    # @return [Integer] The number columns in use by this database object
     def self.column_amount
         return 1 + @properties.length
     end
-    # Public: Ask database object if it contains any object with ALL of the passed values
-    #
-    # Examples
-    #   User.has( :name => 'Luffy', :email => 'luff@gmail.com' )
-    #   # => true
-    #
-    # Returns true if the database object has any object containing all of the passed values
+    # Ask database object if it contains any object with ALL of the passed values
+    # @param where [Hash] A hash containing the wanted values
+    # @return [Boolean] True if the database object has any object containing all of the passed values
     def self.has( where )
         get(where).length > 0
     end
-    # Public: Ask the database object if it contain any objects containing ANY of the passed values
-    #
-    # Examples
-    #   User.has_look_alike( :name => 'Kizaru', :email => 'impossible.email' )
-    #   # => [:name]
-    #
-    # Returns the properties that already exist, nil if none of them exists.
+    # Ask the database object if it contain any objects containing ANY of the passed values
+    # @param where [Hash] A hash containing the wanted values
+    # @return [Array] The properties that already exist, nil if none of them exists.
     def self.has_look_alike( where )
         look_alikes = get( where ) {{ :where_method => :or }}
         look_alike_properties = nil
@@ -160,28 +85,16 @@ class DataMapper
         end
         look_alike_properties
     end
-    # Public: Get all the objects in the table
-    #
-    # Examples
-    #   User.all
-    #   # => [User, User, User, User, User]
-    #
-    # Returns all the objects in the table
+    # Get all the objects in the table
+    # @param block [Block] An optional block containing options for the requests
+    # @return [Array] All the objects in the table
     def self.all(&block)
         self.get( nil, &block )
     end
-    # Public: Get all the objects in the table with the specified values
-    #
-    # where - A hash containing all the required values OR an integer representing a primary key OR nil for all
-    # block - An optional block containing options for the get
-    #
-    # Examples
-    #   u = User.get( :name => "Gecko", :email => "gee@gmail.com" ) {{ preload: [:posts] }}
-    #   p = u.posts
-    #   DataMapper.requests_done
-    #   # => 1
-    #
-    # Returns all objects that match the criteria
+    # Get all the objects in the table with the specified values
+    # @param where [Hash] A hash containing all the required values OR an integer representing a primary key OR nil for all
+    # @param block [Block] An optional block containing options for the get
+    # @return [Array] All the objects that match the criteria
     def self.get( where, &block )
         options = block_given? ? block.call : Hash.new
 
@@ -261,16 +174,11 @@ class DataMapper
             data.map { |d| new(d) }
         end
     end
-    # Public: Create a new object and insert it into a row
-    #
-    # cols - The values of all the columns
-    #
-    # Examples
-    #   User.create("Robin", "rawr@gmail.com", "pa$$word")
-    #   # => User
-    #
-    # Returns the added object
+    # Create a new object and insert it into a row
+    # @param cols [Array] The values of all the columns
+    # @return The added object
     def self.create( *cols )
+        @encrypted_properties ||= []
         encrypted = []
         @properties.each_with_index do |p, i|
             if @encrypted_properties.include? p
@@ -284,15 +192,9 @@ class DataMapper
         count_request
         new(database.execute( "SELECT * FROM #{@table_name_attr} WHERE #{@primary_key_attr} IS last_insert_rowid()" ).first)
     end
-    # Public: Update a specific row with modifications
-    #
-    # modifications - The columns to change and the values to change to
-    # where - A hash identifying which rows to change
-    #
-    # Examples
-    #   User.modify( {:name => 'Fatty'}, {:name => 'Catty'} )
-    #   # => Changes all users named Catty to Fatty
-    #
+    # Update a specific row with modifications
+    # @param modifications [Hash] The columns to change and the values to change to
+    # @param where [Hash] A hash identifying which rows to change
     def self.modify( modifications, where )
         update_statement = "UPDATE #{@table_name_attr}"
         set_statement = "SET "
@@ -323,16 +225,10 @@ class DataMapper
         attr_reader :properties, :primary_key_attr, :table_name_attr, :associations, :encrypted_properties
     end
 
-    # Public: Initialize a new object from column values and preloaded properties
-    #
-    # cols - The column values
-    # preloads - Optional preloaded properties
-    #
-    # Examples
-    #   User.new(1, "Buggy", "fun@gmail.com", "8f036369a5cd26454949e594fb9e0a2d")
-    #   # => User
-    #
-    # Returns the initialized user
+    # Initialize a new object from column values and preloaded properties
+    # @param cols [Array] The column values
+    # @param preloads [Hash] Optional preloaded associations
+    # @return The initialized object
     def initialize( cols, preloads = Hash.new )
         @data = Hash.new
         @data[self.class.primary_key_attr] = cols [0]
@@ -347,31 +243,19 @@ class DataMapper
             end
         end
     end
-    # Public: Modify values in the user
-    #
-    # modifications - A hash containing the modifications
-    #
-    # Examples
-    #   user_instance.modify( name: "NewName", email: "Ne@we.mail")
-    #   # => Modifies the specified values
-    #
+    # Modify values in the user
+    # @param modifications [Hash] A hash containing the modifications
     def modify(modifications)
         self.class.modify(modifications, {self.class.primary_key_attr => @data[self.class.primary_key_attr]})
     end
-    # Public: The method handling all of the property access
-    #
-    # method - The missing method (usually a property or association)
-    # args - The method arguments (used when modifying properties)
-    #
-    # Examples
-    #   user_instance.name = "NewName"
-    #   posts = user_instance.posts
-    #
+    # The method handling all of the property access
+    # @param method [Symbol] The missing method (usually a property or association)
+    # @param args [Array] The method arguments (used when modifying properties)
     def method_missing(method, *args)
         encrypted = self.class.encrypted_properties ? self.class.encrypted_properties : []
         associations = self.class.associations ? self.class.associations : Hash.new
         if @data.has_key?(method)
-            if self.class.encrypted_properties.include? method
+            if encrypted.include? method
                 BCrypt::Password.new(@data[method])
             else
                 @data[method]
