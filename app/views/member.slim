@@ -1,1 +1,16 @@
-p Welcome to the members home #{@user.name}
+.inner
+    .poll_brief
+        .poll_name = "How old are you?"
+        canvas.poll_activity
+            | generator
+        .poll_options
+            .poll_option 
+                .poll_option_color style="background-color: lime"
+                | Option #1
+            .poll_option 
+                .poll_option_color style="background-color: orange"
+                | Option #2
+            .poll_option 
+                .poll_option_color style="background-color: pink"
+                | Option #3
+    script src="/js/poll_activity.js"

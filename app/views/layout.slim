@@ -4,9 +4,13 @@ html
         title Pollare - Voting Is Simple
         link rel="stylesheet" href="/css/default.css"
         link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet"
+        link href="https://fonts.googleapis.com/css?family=Caveat" rel="stylesheet"
     body
         - if @user
             .userbar
                 p.username = "Logged in as #{@user.name.capitalize   }"
-                a.profile = "My Profile"
+                .buttons
+                    a.button href="/member" = "My Polls" 
+                    a.button href="/member" = "Followed Polls"
+                    a.button href="/logout" = "Logout"  
         ==yield

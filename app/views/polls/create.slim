@@ -1,0 +1,32 @@
+h1.title New Poll
+form id="create" method="post" action="/polls/create"
+    - case @name_error
+        - when :none
+            p.error The poll needs a name
+        - when :length
+            p.error The name cannot be longer than 100 letters.
+    input name="name" placeholder="Poll Question" value="#{@name ? @name : ""}"
+    - case @options_error
+        - when :short
+            p.error The poll needs atleast 2 options
+        - when :long
+            p.error A poll can have a maximum of 20 options.
+    h2.sub Options
+    .options
+        - if !@options
+            input.option name="option_1" placeholder="Option 1"
+        - else
+            - @options.each_with_index do |o, i|
+                input.option name="option_#{i}" placeholder="Option #{i}" value="#{o}"
+    - case @security_level_error
+        - when :none
+            p.error The poll needs an identification.
+        - when :unrecognizeds
+            p.error Unrecognized security level. What did you do?!
+    select name="security_level"
+        option value="0" selected="selected"    Select identification
+        option value="1"                        No identification
+        option value="2"                        Network identification
+        option value="3"                        Account identification
+    input value="Create Poll" type="submit"
+script src="/js/add_options.js"

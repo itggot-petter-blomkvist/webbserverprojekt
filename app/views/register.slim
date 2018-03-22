@@ -1,5 +1,5 @@
 img id="logo" src="/img/logo.png"
-form id="login" method="post" action="/register"
+form method="post" action="/register"
     - case @username_error
         - when :exists
             p.error Username is already in use

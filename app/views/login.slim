@@ -1,5 +1,7 @@
 img id="logo" src="/img/logo.png"
-form id="login" method="post" action="/login"
+form method="post" action="/login"
+    - if flash[:request]
+        p.error = flash[:request]
     - if @username_error == :wrong || @password_error == :wrong
         p.error Wrong username or password
     - case @username_error
